@@ -1,5 +1,5 @@
 {
-    "name": "marcovo/php-junit-merge",
+    "name": "bitpanda-labs/php-junit-merge",
     "type": "library",
     "description": "PHP-Unit J-Unit XML File Merger",
     "homepage": "https://github.com/andreas-weber/php-junit-merge",
@@ -15,7 +15,7 @@
         "issues": "https://github.com/andreas-weber/php-junit-merge/issues"
     },
     "require": {
-        "php": ">=5.6",
+        "php": "^8.0.0",
         "symfony/console": "^3.0 || ^4.0 || ^5.0 || ^6.0",
         "symfony/finder": "^3.0 || ^4.0 || ^5.0 || ^6.0",
         "theseer/fdomdocument": "1.6.*"
