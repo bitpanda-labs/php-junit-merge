@@ -31,7 +31,7 @@
  * @since     File available since Release 1.0.0
  */
 
-namespace AndreasWeber\PHPJUNITMERGE\Console;
+namespace AndreasWeber\PHPJUNITMERGE\Command;
 
 use Symfony\Component\Console\Command\Command as AbstractCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -59,19 +59,14 @@ class Command extends AbstractCommand
     protected function configure()
     {
         $this->setName('phpjunitmerge')
-            ->setDefinition(
-                array(
-                    new InputArgument(
-                        'dir',
-                        InputArgument::REQUIRED,
-                        'Directory where all files ready to get merged are stored'
-                    ),
-                    new InputArgument(
-                        'file',
-                        InputArgument::REQUIRED,
-                        'The target file in which the merged result should be written'
-                    )
-                )
+            ->addArgument(
+                'dir',
+                InputArgument::REQUIRED,
+                'Directory where all files ready to get merged are stored')
+            ->addArgument(
+                'file',
+                InputArgument::REQUIRED,
+                'The target file in which the merged result should be written'
             )
             ->addOption(
                 'names',
@@ -87,13 +82,13 @@ class Command extends AbstractCommand
                 'A comma-separated list of file names to ignore',
                 'result.xml'
             )
-			->addOption(
-				'no-suffix',
-				null,
-				InputOption::VALUE_NONE,
-				'Do not add suffix for test suites with duplicate names',
-				null
-			);
+            ->addOption(
+                'no-suffix',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not add suffix for test suites with duplicate names',
+                null
+            );
     }
 
     /**
@@ -123,7 +118,7 @@ class Command extends AbstractCommand
             $ignoreNames = array();
         }
 
-		$noSuffix = $input->hasParameterOption('--no-suffix');
+        $noSuffix = $input->hasParameterOption('--no-suffix');
         // here is where the magic happens
         $files = $this->findFiles($directory, $names, $ignoreNames);
         $outXml = $this->mergeFiles(realpath($directory), $files, $noSuffix);
@@ -168,7 +163,7 @@ class Command extends AbstractCommand
      *
      * @param string $directory
      * @param Finder $finder
-	 * @param bool $noSuffix
+     * @param bool $noSuffix
      *
      * @return fDOMDocument
      */
@@ -198,20 +193,20 @@ class Command extends AbstractCommand
             $inXml = $this->loadFile($file->getRealpath());
             foreach ($inXml->query('//testsuites/testsuite') as $inElement) {
 
-				if (!$noSuffix) {
-					$inName = $inElement->getAttribute('name');
-					$outName = $inName;
-					$suffix = 2;
-					while ($outTestSuite->query('//testsuite[@name="' . $outName . '"]')->length !== 0) {
-						$outName = $inName . '_' . $suffix;
-						$suffix++;
-					}
-				}
+                if (!$noSuffix) {
+                    $inName = $inElement->getAttribute('name');
+                    $outName = $inName;
+                    $suffix = 2;
+                    while ($outTestSuite->query('//testsuite[@name="' . $outName . '"]')->length !== 0) {
+                        $outName = $inName . '_' . $suffix;
+                        $suffix++;
+                    }
+                }
 
                 $outElement = $outXml->importNode($inElement, true);
-				if (!$noSuffix) {
-					$outElement->setAttribute('name', $outName);
-				}
+                if (!$noSuffix) {
+                    $outElement->setAttribute('name', $outName);
+                }
                 $outTestSuite->appendChild($outElement);
 
                 $tests += $inElement->hasAttribute('tests') ? $inElement->getAttribute('tests') : 0;

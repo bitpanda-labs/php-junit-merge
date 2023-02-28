@@ -1,5 +1,7 @@
 #!/usr/bin/env php
 <?php
+
+use Symfony\Component\Console\Application;
 /**
  * phpjunitmerge
  *
@@ -53,5 +55,26 @@ if (!$loaded) {
     );
 }
 
-$application = new AndreasWeber\PHPJUNITMERGE\Console\Application;
+$application = new class extends Application
+{
+    public function __construct()
+    {
+        parent::__construct('PhpJunitMerge', '1.0.6');
+    }
+
+    /**
+     * Gets the default commands that should always be available.
+     *
+     * @return \Symfony\Component\Console\Command\Command[] An array of default Command instances
+     * @throws \Symfony\Component\Console\Exception\LogicException
+     */
+    public function getDefaultCommands(): array
+    {
+        return [
+            ...parent::getDefaultCommands(),
+            new AndreasWeber\PHPJUNITMERGE\Command\Command(),
+        ];
+    }
+};
+
 $application->run();
